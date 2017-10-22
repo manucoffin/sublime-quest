@@ -1,0 +1,285 @@
+<!doctype html>
+<title>Keyboard control</title>
+
+<canvas width="1000" height="600" style="border: 1px dashed black"></canvas>
+<script src="requestAnimationFramePolyfill.js"></script>
+
+<script>
+
+//--- The sprite object
+
+var spriteObject =
+{
+  sourceX: 0,
+  sourceY: 0,
+  sourceWidth: 64,
+  sourceHeight: 64,
+  x: 0,
+  y: 0,
+  width: 64,
+  height: 64,
+  vx: 0,
+  vy: 0,
+  gravity: 0.3,
+  speed:3,
+  friction:0.8,
+  jumping:false,
+  grounded:false
+
+};
+
+//--- The main program
+
+//The canvas and its drawing surface
+var canvas = document.querySelector("canvas");
+var drawingSurface = canvas.getContext("2d");
+
+//An array to store the sprites
+var sprites = [];
+var boxes=[];
+
+//Create the cat sprite and center it
+var cat = Object.create(spriteObject);
+cat.x = canvas.width/2;
+cat.y = canvas.height/2;
+sprites.push(cat);
+
+// Create Boxes
+boxes.push({
+  x:120,
+  y:450,
+  width:80,
+  height:80
+});
+boxes.push({
+  x:220,
+  y:350,
+  width:80,
+  height:80
+});
+
+boxes.push({
+  x:420,
+  y:150,
+  width:80,
+  height:80
+});
+
+boxes.push({
+  x:0,
+  y:canvas.height-5,
+  width:canvas.width/2,
+  height:5
+});
+
+boxes.push({
+  x:0,
+  y:0,
+  width:5,
+  height:canvas.height
+});
+
+
+boxes.push({
+  x:canvas.width-5,
+  y:0,
+  width:5,
+  height:canvas.height
+});
+
+//Load the image
+var image = new Image();
+image.addEventListener("load", loadHandler, false);
+image.src = "cat.png";
+
+//Arrow key codes
+
+var RIGHT = 39;
+var LEFT = 37;
+var SPACE = 32;
+
+//Directions
+var moveRight = false;
+var moveLeft = false;
+var jump =false;
+
+//Add keyboard listeners
+window.addEventListener("keydown", function(event)
+{
+  switch(event.keyCode)
+  {
+      
+	  case LEFT:
+	    moveLeft = true;
+	    break;  
+	    
+	  case RIGHT:
+	    moveRight = true;
+	    break; 
+
+    case SPACE:
+      jump=true;
+      console.log(jump);
+      break;
+  }
+}, false);
+
+window.addEventListener("keyup", function(event)
+{
+  switch(event.keyCode)
+  {
+    case LEFT:
+      moveLeft = false;
+      break;  
+      
+    case RIGHT:
+      moveRight = false;
+      break; 
+
+    case SPACE:
+      jump=false;
+      break;
+  }
+}, false);
+
+function loadHandler()
+{ 
+  update();
+}
+
+function update()
+{
+  //The animation loop
+  requestAnimationFrame(update,canvas);
+ 
+  //Left
+  if(moveLeft && !moveRight)
+  {
+    if(cat.vx>-cat.speed)cat.vx--;
+  }
+  //Right
+  if(moveRight && !moveLeft)
+  {
+    if(cat.vx<cat.speed) cat.vx++;
+  }
+  
+  //Set the cat's velocity to zero if none of the keys are being pressed
+
+  if(!moveLeft && !moveRight)
+  {
+    cat.vx = 0;
+  }
+
+  if(jump && !cat.jumping)
+  {
+    cat.jumping=true;
+    cat.vy=-cat.speed*4;
+    
+  }
+  
+  cat.vx*=cat.friction;
+  cat.vy+=cat.gravity;
+
+
+  
+    cat.grounded = false;
+
+  for (var i = 0; i < boxes.length; i++) {
+        
+        var dir = colCheck(cat, boxes[i]);
+        console.log(dir);
+
+        if (dir === "l" || dir === "r") {
+            cat.vx = 0;
+            cat.jumping = false;
+        } else if (dir === "b") {
+            cat.grounded = true;
+            cat.jumping = false;
+        } else if (dir === "t") {
+            cat.vy*= -1;
+        }
+
+    }
+
+    // Si cat on ground
+
+    if(cat.grounded){
+         cat.vy = 0;
+    }
+    
+    // Cat position
+    cat.x += cat.vx;
+    cat.y += cat.vy;
+
+
+
+  
+  //Render the sprite
+  render();
+}
+
+
+function colCheck(shapeA, shapeB) {
+    // get the vectors to check against
+    var vX = (shapeA.x + (shapeA.width / 2)) - (shapeB.x + (shapeB.width / 2)),
+        vY = (shapeA.y + (shapeA.height / 2)) - (shapeB.y + (shapeB.height / 2)),
+        // add the half widths and half heights of the objects
+        hWidths = (shapeA.width / 2) + (shapeB.width / 2),
+        hHeights = (shapeA.height / 2) + (shapeB.height / 2),
+        colDir = null;
+
+    // if the x and y vector are less than the half width or half height, they we must be inside the object, causing a collision
+    if (Math.abs(vX) < hWidths && Math.abs(vY) < hHeights) {
+        // figures out on which side we are colliding (top, bottom, left, or right)
+        var oX = hWidths - Math.abs(vX),
+            oY = hHeights - Math.abs(vY);
+        if (oX >= oY) {
+            if (vY > 0) {
+                colDir = "t";
+                shapeA.y += oY;
+            } else {
+                colDir = "b";
+                shapeA.y -= oY;
+            }
+        } else {
+            if (vX > 0) {
+                colDir = "l";
+                shapeA.x += oX;
+            } else {
+                colDir = "r";
+                shapeA.x -= oX;
+            }
+        }
+    }
+    return colDir;
+}
+
+function render()
+{ 
+  //Clear the previous animation frame
+  drawingSurface.clearRect(0, 0, canvas.width, canvas.height);
+
+      for (var i = 0; i < boxes.length; i++) {
+        drawingSurface.fillRect(boxes[i].x, boxes[i].y, boxes[i].width, boxes[i].height);
+}
+  
+  //Loop through all the sprites and use 
+  //their properties to display them
+  if(sprites.length !== 0)
+  {
+    for(var i = 0; i < sprites.length; i++)
+    {
+      var sprite = sprites[i];
+      drawingSurface.drawImage
+      (
+        image, 
+        sprite.sourceX, sprite.sourceY, 
+        sprite.sourceWidth, sprite.sourceHeight,
+        Math.floor(sprite.x), Math.floor(sprite.y), 
+        sprite.width, sprite.height
+      ); 
+    }
+  }
+}
+
+</script>

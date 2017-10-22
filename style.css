@@ -1,0 +1,14 @@
+table{
+	position: absolute;
+	top: 50px;
+	border: 1px solid black;
+	left: 800px;
+}
+
+#score{
+	position: absolute;
+	border: 1px solid black;
+	left: 800px;
+	top:0px;
+}
+
