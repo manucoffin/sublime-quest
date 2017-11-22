@@ -4,3 +4,5 @@ Sublime Quest est un jeu de type shoot 'em up créé en collaboration avec [Thib
 
 L'objectif du projet était de développer un jeu en utilisant la balise HTML5 `<canvas>` et son API. 
 Un backend en PHP permet de sauvegarder les performances des joueurs en base de données.
+
+[Démo disponible ici](https://works.manuelcoffin.fr/sublime-quest/)
