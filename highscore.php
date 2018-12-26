@@ -60,7 +60,7 @@
 				<?php } ?>
 			</table>
 
-			<a href="accueil.php"> Retour à l'accueil </a>
+			<a href="index.php"> Retour à l'accueil </a>
 			
 		</section>
 

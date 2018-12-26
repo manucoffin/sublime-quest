@@ -44,7 +44,7 @@
 		<canvas id="infosJoueur" width="50px" height="50px"></canvas>
 		<p id="balles"> Chargeur : 10 </p>
 		<a href="controler.php"> Rejouer !</a>
-		<a href="accueil.php?destroy=1"> Accueil </a>
+		<a href="index.php?destroy=1"> Accueil </a>
 
 		
 	</aside>

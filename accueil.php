@@ -37,6 +37,6 @@
 	      @session_destroy();      
 	   }
 	   die();
-	   header("location:accueil.php");
+	   header("location:index.php");
 	}
 ?>

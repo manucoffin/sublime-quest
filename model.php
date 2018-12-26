@@ -30,9 +30,7 @@ class DBInterface{
 
   //Declaration des methodes
   public function __construct(){
-   // $this->cnx = new PDO("mysql:dbname=ollivier;host=localhost", "ollivier", "kkHL_qY7");
-    //$this->cnx = new PDO("mysql:dbname=jeu;host=localhost", "root", "root");
-    $this->cnx = new PDO("mysql:dbname=coffin;host=localhost", "coffin", "CraaKj_U");
+    $this->cnx = new PDO("mysql:dbname=admin_sublimequest;host=localhost", "sublimequest", "X*l30gm9");
   }
 
   public function saveScore($score, $pseudo){
